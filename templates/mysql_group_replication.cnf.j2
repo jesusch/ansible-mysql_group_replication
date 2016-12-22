@@ -1,0 +1,30 @@
+[mysqld]
+
+server-id={{ groups['mysql_group_replication'].index(inventory_hostname) + 1 }}
+gtid_mode=ON
+enforce_gtid_consistency=ON
+master_info_repository=TABLE
+relay_log_info_repository=TABLE
+binlog_checksum=NONE
+log_slave_updates=ON
+log_bin=binlog
+binlog_format=ROW
+plugin-load=group_replication.so
+transaction_write_set_extraction=XXHASH64
+
+group_replication_group_name = {{ mysql_gr_group_name | to_uuid }}
+group_replication_recovery_retry_count = 2
+group_replication_recovery_reconnect_interval = 120
+group_replication_start_on_boot = off
+group_replication_local_address = "{{ hostvars[inventory_hostname]['ansible_' + mysql_gr_network_interface].ipv4.address }}:{{ mysql_gr_network_port }}"
+group_replication_bootstrap_group = off
+group_replication_single_primary_mode = FALSE
+group_replication_enforce_update_everywhere_checks = TRUE
+{% set mysql_gr_members = [] -%}
+{%- for node in groups['mysql_group_replication'] %}
+  {%- set node = hostvars[node]['ansible_' + mysql_gr_network_interface].ipv4.address -%}
+  {%- set node = node + ':' -%}
+  {%- set node = node + mysql_gr_network_port | string -%}
+  {%- set _ = mysql_gr_members.append(node) -%}
+{% endfor -%}
+group_replication_group_seeds= "{{ ",".join(mysql_gr_members) }}"

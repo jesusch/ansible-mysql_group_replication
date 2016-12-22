@@ -1,0 +1,22 @@
+---
+- name: copy bootstrap.sql to server
+  copy:
+    src: bootstrap.sql
+    dest: /tmp/bootstrap.sql
+  tags:
+    - bootstrap
+
+- name: run bootstrap.sql
+  mysql_db:
+    name: mysql
+    state: import
+    target: /tmp/bootstrap.sql
+  tags:
+    - bootstrap
+
+- name: remove bootstrap.sql
+  file:
+    name: /tmp/bootstrap.sql
+    state: absent
+  tags:
+    - bootstrap

@@ -1,0 +1,29 @@
+---
+- name: Add oracle mysql apt key
+  apt_key:
+    id: 5072E1F5
+    keyserver: pgp.mit.edu
+    state: present
+  tags:
+    - setup
+
+- name: Add oracle mysql apt repository
+  apt_repository:
+    repo: "{{ item }}"
+    update_cache: yes
+    state: present
+  with_items:
+    - "deb http://repo.mysql.com/apt/debian/ {{ ansible_distribution_release }} mysql-apt-config"
+    - "deb http://repo.mysql.com/apt/debian/ {{ ansible_distribution_release }} mysql-5.7"
+  tags:
+    - setup
+
+- name: Install mysql-community software
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - mysql-community-server
+    - python-mysqldb
+  tags:
+    - setup

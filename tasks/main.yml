@@ -1,0 +1,6 @@
+---
+- include: setup.yml
+- include: configure.yml
+- include: bootstrap.yml
+  when: mysql_gr_bootstrap and groups['mysql_group_replication'].index(inventory_hostname) == 0
+  run_once: true

@@ -1,0 +1,18 @@
+---
+- name: create mysql group replication user
+  mysql_user:
+    name: "{{ mysql_gr_replication_user }}"
+    password: "{{ mysql_gr_replication_user_pass }}"
+    priv: '*.*:REPLICATION SLAVE'
+    host_all: yes
+    state: present
+  tags:
+    - grants
+
+- name: create custom mysql config file
+  template:
+    src: mysql_group_replication.cnf.j2
+    dest: /etc/mysql/mysql.conf.d/mysql_group_replication.cnf
+  notify: restart mysql
+  tags:
+    - templates
