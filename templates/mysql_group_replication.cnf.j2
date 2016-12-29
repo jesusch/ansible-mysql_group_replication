@@ -13,6 +13,7 @@ binlog_format=ROW
 plugin-load=group_replication.so
 transaction_write_set_extraction=XXHASH64
 
+group_replication_ip_whitelist = "{{ mysql_gr_ip_whitelist }}"
 group_replication_group_name = {{ mysql_gr_group_name | to_uuid }}
 group_replication_recovery_retry_count = 2
 group_replication_recovery_reconnect_interval = 120
