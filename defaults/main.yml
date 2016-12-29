@@ -11,3 +11,5 @@ mysql_gr_bootstrap: False
 mysql_gr_replication_user: 'repl'
 # GR replication password
 mysql_gr_replication_user_pass: 'repl'
+# GR IP whitelist
+mysql_gr_ip_whitelist: '10.0.0.0/8,172.16.0.0/12,192.168.0.0/16'
