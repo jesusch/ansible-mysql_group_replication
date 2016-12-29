@@ -1,0 +1,5 @@
+{% if inventory_hostname == groups.mysql_group_replication[0] %}
+SET GLOBAL group_replication_bootstrap_group=ON;
+{% endif %}
+START GROUP_REPLICATION;
+SET GLOBAL group_replication_bootstrap_group=OFF;
