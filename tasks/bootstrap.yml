@@ -1,11 +1,11 @@
 ---
 - name: create sql file for replication user
   template:
-    src: 
-    dest: /tmp/create_replication_user.sql
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
   with_items:
-    - { src: create_replication_user.sql.j2, dest: /tmp/create_replication_user.sql }
-    - { src: start_replication.sql.j2, dest: /tmp/start_replication.sql }
+    - { src: "create_replication_user.sql.j2", dest: "/tmp/create_replication_user.sql" }
+    - { src: "start_replication.sql.j2", dest: "/tmp/start_replication.sql" }
   tags:
     - bootstrap
   
