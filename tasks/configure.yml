@@ -1,14 +1,4 @@
 ---
-- name: create mysql group replication user
-  mysql_user:
-    name: "{{ mysql_gr_replication_user }}"
-    password: "{{ mysql_gr_replication_user_pass }}"
-    priv: '*.*:REPLICATION SLAVE'
-    host_all: yes
-    state: present
-  tags:
-    - grants
-    
 - name: ensure there is no custom bind-address
   lineinfile:
     dest: /etc/mysql/mysql.conf.d/mysqld.cnf
