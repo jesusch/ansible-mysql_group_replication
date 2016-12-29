@@ -8,6 +8,15 @@
     state: present
   tags:
     - grants
+    
+- name: ensure there is no custom bind-address
+  lineinfile:
+    dest: /etc/mysql/mysql.conf.d/mysqld.cnf
+    regexp: '^bind-address'
+    state: absent
+  notify: restart mysql
+  tags:
+    - templates
 
 - name: create custom mysql config file
   template:
