@@ -15,31 +15,4 @@
   notify: restart mysql
   tags:
     - templates
-    
-- name: create sql file for replication user
-  template:
-    src: create_replication_user.sql.j2
-    dest: /tmp/create_replication_user.sql
-  when: mysql_gr_bootstrap
-  register: gr_user
-  tags:
-    - grants
-    - templates
-  
-- name: execute sql file for replication user
-  mysql_db:
-    name: all
-    state: import
-    target: /tmp/create_replication_user.sql
-  when: gr_user.changed
-  tags:
-    - grants
-    
-- name: remove sql file for replication user
-  file:
-    name: /tmp/create_replication_user.sql
-    state: absent
-  when: gr_user.changed
-  tags:
-    - grants
   
