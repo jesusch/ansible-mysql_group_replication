@@ -1,22 +1,47 @@
 ---
-- name: copy bootstrap.sql to server
-  copy:
-    src: bootstrap.sql
-    dest: /tmp/bootstrap.sql
+- name: create sql file for replication user
+  template:
+    src: 
+    dest: /tmp/create_replication_user.sql
+  with_items:
+    - { src: create_replication_user.sql.j2, dest: /tmp/create_replication_user.sql }
+    - { src: start_replication.sql.j2, dest: /tmp/start_replication.sql }
   tags:
     - bootstrap
-
-- name: run bootstrap.sql
+  
+- name: execute sql file for replication user
   mysql_db:
-    name: mysql
+    name: all
     state: import
-    target: /tmp/bootstrap.sql
+    target: /tmp/create_replication_user.sql
   tags:
     - bootstrap
-
-- name: remove bootstrap.sql
+    
+- name: execute start replication on first node
+  mysql_db:
+    name: all
+    state: import
+    target: /tmp/start_replication.sql
+  delegate_to: groups.mysql_group_replication[0]
+  run_once: True
+  tags:
+    - bootstrap
+    
+- name: execute start replication on other nodes
+  mysql_db:
+    name: all
+    state: import
+    target: /tmp/start_replication.sql
+  when: groups.mysql_group_replication[0] != inventory_hostname
+  tags:
+    - bootstrap
+    
+- name: remove sql files
   file:
-    name: /tmp/bootstrap.sql
+    name: "{{ item }}"
     state: absent
+  with_items:
+    - /tmp/create_replication_user.sql
+    - /tmp/start_replication.sql
   tags:
     - bootstrap
